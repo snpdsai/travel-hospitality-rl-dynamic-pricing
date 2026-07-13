@@ -1,7 +1,7 @@
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
-
+from src.demand import DemandModel
 
 class DynamicPricingEnv(gym.Env):
     """
@@ -30,6 +30,16 @@ class DynamicPricingEnv(gym.Env):
 
         self.state = None
 
+        self.demand_model = DemandModel()
+
+        self.price_levels = {
+            0: 80,
+            1: 90,
+            2: 100,
+            3: 110,
+            4: 120
+        }
+
     def reset(self, seed=None, options=None):
 
         super().reset(seed=seed)
@@ -43,9 +53,31 @@ class DynamicPricingEnv(gym.Env):
 
     def step(self, action):
 
-        raise NotImplementedError(
-            "Step function will be implemented later."
+        inventory, days_left = self.state
+
+        done = False
+
+        reward = 0
+
+        if inventory > 0:
+
+            bought = self.demand_model.customer_buys(action, days_left)
+
+            if bought:
+                inventory -= 1
+                reward = self.price_levels[action]
+
+        days_left -= 1
+
+        if inventory == 0 or days_left == 0:
+            done = True
+
+        self.state = np.array(
+            [inventory, days_left],
+            dtype=np.int32
         )
+
+        return self.state, reward, done, False, {}
 
     def render(self):
 

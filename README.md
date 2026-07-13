@@ -5,3 +5,10 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 ## Project Structure
 
 (To be updated)
+
+### Week 1 Progress
+
+- Implemented stochastic customer demand model
+- Simulated customer purchase decisions
+- Completed Gymnasium environment step function
+- Simulated one booking season
