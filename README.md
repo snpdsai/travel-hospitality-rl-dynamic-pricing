@@ -12,3 +12,7 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 - Simulated customer purchase decisions
 - Completed Gymnasium environment step function
 - Simulated one booking season
+- Implemented custom Gymnasium environment
+- Built stochastic customer demand model
+- Developed baseline pricing strategies
+- Created evaluation pipeline for heuristic agents
