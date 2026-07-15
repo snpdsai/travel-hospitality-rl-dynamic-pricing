@@ -2,6 +2,12 @@ import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
 from src.demand import DemandModel
+from src.config import (
+    MAX_INVENTORY,
+    MAX_DAYS,
+    BASE_PRICE,
+    PRICE_LEVELS
+)
 
 class DynamicPricingEnv(gym.Env):
     """
@@ -13,9 +19,10 @@ class DynamicPricingEnv(gym.Env):
 
         super().__init__()
 
-        self.max_inventory = 50
-        self.max_days = 30
-        self.base_price = 100
+        self.max_inventory = MAX_INVENTORY
+        self.max_days = MAX_DAYS
+        self.base_price = BASE_PRICE
+        self.price_levels = PRICE_LEVELS
 
         # State:
         # [remaining inventory, remaining days]
@@ -31,14 +38,6 @@ class DynamicPricingEnv(gym.Env):
         self.state = None
 
         self.demand_model = DemandModel()
-
-        self.price_levels = {
-            0: 80,
-            1: 90,
-            2: 100,
-            3: 110,
-            4: 120
-        }
 
     def reset(self, seed=None, options=None):
 

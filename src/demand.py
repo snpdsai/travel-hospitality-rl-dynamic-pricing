@@ -1,5 +1,5 @@
 import numpy as np
-
+from src.config import PRICE_MULTIPLIERS
 
 class DemandModel:
     """
@@ -8,13 +8,7 @@ class DemandModel:
 
     def __init__(self):
 
-        self.price_multipliers = {
-            0: 0.8,
-            1: 0.9,
-            2: 1.0,
-            3: 1.1,
-            4: 1.2
-        }
+        self.price_multipliers = PRICE_MULTIPLIERS
 
     def purchase_probability(self, action, days_left):
         """
