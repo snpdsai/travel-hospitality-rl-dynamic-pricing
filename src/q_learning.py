@@ -44,3 +44,51 @@ class QLearningAgent:
                 days_left
             ]
         )
+
+    def update_q_table(
+        self,
+        state,
+        action,
+        reward,
+        next_state,
+    ):
+
+        inventory, days_left = state
+
+        next_inventory, next_days = next_state
+
+        current_q = self.q_table[
+            inventory,
+            days_left,
+            action
+        ]
+
+        max_future_q = np.max(
+            self.q_table[
+                next_inventory,
+                next_days
+            ]
+        )
+
+        new_q = current_q + self.lr * (
+            reward
+            + self.gamma * max_future_q
+            - current_q
+        )
+
+        self.q_table[
+            inventory,
+            days_left,
+            action
+        ] = new_q
+
+    def decay_epsilon(
+        self,
+        decay_rate=0.995,
+        min_epsilon=0.01,
+    ):
+
+        self.epsilon = max(
+            min_epsilon,
+            self.epsilon * decay_rate
+        )

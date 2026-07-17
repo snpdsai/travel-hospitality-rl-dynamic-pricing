@@ -28,3 +28,6 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 - Implemented the Q-Learning agent
 - Initialized the Q-table
 - Added epsilon-greedy action selection
+- Implemented Bellman update equation
+- Added epsilon decay
+- Trained Q-Learning agent over multiple episodes
