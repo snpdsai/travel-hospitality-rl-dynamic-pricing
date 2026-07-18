@@ -31,3 +31,6 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 - Implemented Bellman update equation
 - Added epsilon decay
 - Trained Q-Learning agent over multiple episodes
+- Trained Q-Learning agent
+- Saved the learned Q-table
+- Evaluated the learned policy against baseline strategies

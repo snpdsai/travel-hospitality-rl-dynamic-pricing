@@ -1,5 +1,7 @@
 from src.environment import DynamicPricingEnv
 from src.q_learning import QLearningAgent
+import numpy as np
+import os
 
 EPISODES = 500
 
@@ -49,3 +51,12 @@ for episode in range(EPISODES):
 print("\nTraining Complete!")
 
 print("Final Epsilon:", agent.epsilon)
+
+os.makedirs("models", exist_ok=True)
+
+np.save(
+    "models/q_table.npy",
+    agent.q_table
+)
+
+print("Q-table saved successfully.")
