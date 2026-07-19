@@ -60,3 +60,10 @@ np.save(
 )
 
 print("Q-table saved successfully.")
+
+np.save(
+    "models/training_rewards.npy",
+    np.array(episode_rewards)
+)
+
+print("Training rewards saved successfully.")

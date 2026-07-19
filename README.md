@@ -34,3 +34,6 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 - Trained Q-Learning agent
 - Saved the learned Q-table
 - Evaluated the learned policy against baseline strategies
+- Visualized Q-Learning training rewards
+- Compared heuristic baselines with the learned policy
+- Generated evaluation plots for analysis
