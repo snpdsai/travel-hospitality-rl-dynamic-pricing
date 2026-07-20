@@ -37,3 +37,21 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 - Visualized Q-Learning training rewards
 - Compared heuristic baselines with the learned policy
 - Generated evaluation plots for analysis
+
+## Week 2 Deliverables
+
+✔ Baseline Pricing Strategies
+
+✔ Tabular Q-Learning Agent
+
+✔ Bellman Update
+
+✔ Epsilon-Greedy Exploration
+
+✔ Model Evaluation
+
+✔ Training Curve Visualization
+
+✔ Revenue Comparison
+
+✔ Evaluation Metrics
