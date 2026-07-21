@@ -55,3 +55,42 @@ This project develops an autonomous pricing agent using Reinforcement Learning t
 ✔ Revenue Comparison
 
 ✔ Evaluation Metrics
+
+## Neural Network Architecture
+
+The DQN model is a fully connected feed-forward neural network.
+
+Architecture:
+
+Input Layer
+
+- Remaining Inventory
+- Days Until Departure
+
+↓
+
+Hidden Layer (64 neurons)
+
+↓
+
+ReLU Activation
+
+↓
+
+Hidden Layer (64 neurons)
+
+↓
+
+ReLU Activation
+
+↓
+
+Output Layer (5 neurons)
+
+Each output neuron estimates the expected future reward (Q-value) for one pricing action.
+
+## Week 3 Progress
+
+- Implemented Deep Q-Network architecture
+- Added PyTorch neural network
+- Validated forward pass

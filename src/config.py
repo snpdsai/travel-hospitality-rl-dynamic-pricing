@@ -29,3 +29,16 @@ DEFAULT_EPISODES = 100
 # Random Seed
 
 RANDOM_SEED = 42
+
+# ==========================
+# DQN Hyperparameters
+# ==========================
+
+STATE_SIZE = 2          # Inventory, Days Left
+ACTION_SIZE = 5         # Five pricing levels
+
+HIDDEN_SIZE = 64
+
+LEARNING_RATE = 1e-3
+
+GAMMA = 0.95
