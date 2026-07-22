@@ -42,3 +42,10 @@ HIDDEN_SIZE = 64
 LEARNING_RATE = 1e-3
 
 GAMMA = 0.95
+
+# ==========================
+# Replay Buffer
+# ==========================
+
+BUFFER_SIZE = 10000
+BATCH_SIZE = 64

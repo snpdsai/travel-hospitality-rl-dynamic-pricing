@@ -94,3 +94,6 @@ Each output neuron estimates the expected future reward (Q-value) for one pricin
 - Implemented Deep Q-Network architecture
 - Added PyTorch neural network
 - Validated forward pass
+- Added Experience Replay Buffer
+- Implemented random mini-batch sampling
+- Prepared DQN training pipeline
