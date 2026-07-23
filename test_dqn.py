@@ -1,23 +1,24 @@
-import torch
+from src.dqn_agent import DQNAgent
 
-from src.dqn_agent import DQN
+agent = DQNAgent()
 
-model = DQN()
+state = [50, 30]
 
-print(model)
-
-state = torch.tensor(
-    [[50.0, 30.0]]
-)
-
-q_values = model(state)
+print("Initial epsilon:", agent.epsilon)
 
 print()
 
-print("Q Values")
+for i in range(10):
 
-print(q_values)
+    action = agent.choose_action(state)
+
+    print(
+        f"Action {i+1}:",
+        action
+    )
+
+agent.decay_epsilon()
 
 print()
 
-print("Output Shape:", q_values.shape)
+print("New epsilon:", agent.epsilon)

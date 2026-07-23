@@ -49,3 +49,11 @@ GAMMA = 0.95
 
 BUFFER_SIZE = 10000
 BATCH_SIZE = 64
+
+# ==========================
+# DQN Agent
+# ==========================
+
+EPSILON_START = 1.0
+EPSILON_MIN = 0.01
+EPSILON_DECAY = 0.995

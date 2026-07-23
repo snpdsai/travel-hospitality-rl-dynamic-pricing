@@ -97,3 +97,7 @@ Each output neuron estimates the expected future reward (Q-value) for one pricin
 - Added Experience Replay Buffer
 - Implemented random mini-batch sampling
 - Prepared DQN training pipeline
+- Added DQN Agent class
+- Integrated neural network and optimizer
+- Implemented epsilon-greedy action selection
+- Added epsilon decay
