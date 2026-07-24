@@ -101,3 +101,7 @@ Each output neuron estimates the expected future reward (Q-value) for one pricin
 - Integrated neural network and optimizer
 - Implemented epsilon-greedy action selection
 - Added epsilon decay
+- Implemented DQN training step
+- Added mini-batch learning
+- Computed Bellman targets
+- Updated neural network using gradient descent

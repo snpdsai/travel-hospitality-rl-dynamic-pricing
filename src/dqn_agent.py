@@ -11,7 +11,9 @@ from src.config import (
     LEARNING_RATE,
     EPSILON_START,
     EPSILON_MIN,
-    EPSILON_DECAY
+    EPSILON_DECAY,
+    GAMMA,
+    BATCH_SIZE
 )
 
 
@@ -79,3 +81,33 @@ class DQNAgent:
             EPSILON_MIN,
             self.epsilon * EPSILON_DECAY
         )
+
+    def train_step(self, replay_buffer):
+
+        if len(replay_buffer) < BATCH_SIZE:
+            return None
+
+        batch = replay_buffer.sample(BATCH_SIZE)
+
+        states, actions, rewards, next_states, dones = zip(*batch)
+
+        states = torch.FloatTensor(states)
+        actions = torch.LongTensor(actions).unsqueeze(1)
+        rewards = torch.FloatTensor(rewards)
+        next_states = torch.FloatTensor(next_states)
+        dones = torch.FloatTensor(dones)
+
+        current_q = self.model(states).gather(1, actions).squeeze()
+
+        with torch.no_grad():
+            max_next_q = self.model(next_states).max(1)[0]
+
+        target_q = rewards + GAMMA * max_next_q * (1 - dones)
+
+        loss = self.loss_fn(current_q, target_q)
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
+        return loss.item()
