@@ -105,3 +105,6 @@ Each output neuron estimates the expected future reward (Q-value) for one pricin
 - Added mini-batch learning
 - Computed Bellman targets
 - Updated neural network using gradient descent
+- Added Target Network
+- Implemented weight synchronization
+- Updated DQN training to use stable target Q-values

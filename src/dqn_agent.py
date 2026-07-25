@@ -45,6 +45,16 @@ class DQNAgent:
 
         self.model = DQN()
 
+        # Target Network
+        self.target_model = DQN()
+
+        # Initial synchronization
+        self.target_model.load_state_dict(
+            self.model.state_dict()
+        )
+
+        self.target_model.eval()
+
         self.optimizer = optim.Adam(
             self.model.parameters(),
             lr=LEARNING_RATE
@@ -82,6 +92,16 @@ class DQNAgent:
             self.epsilon * EPSILON_DECAY
         )
 
+    def update_target_network(self):
+        """
+        Copies the weights from the online network
+        to the target network.
+        """
+
+        self.target_model.load_state_dict(
+            self.model.state_dict()
+        )
+
     def train_step(self, replay_buffer):
 
         if len(replay_buffer) < BATCH_SIZE:
@@ -100,7 +120,9 @@ class DQNAgent:
         current_q = self.model(states).gather(1, actions).squeeze()
 
         with torch.no_grad():
-            max_next_q = self.model(next_states).max(1)[0]
+            max_next_q = self.target_model(
+                next_states
+            ).max(1)[0]
 
         target_q = rewards + GAMMA * max_next_q * (1 - dones)
 

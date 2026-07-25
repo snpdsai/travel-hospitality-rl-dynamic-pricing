@@ -57,3 +57,9 @@ BATCH_SIZE = 64
 EPSILON_START = 1.0
 EPSILON_MIN = 0.01
 EPSILON_DECAY = 0.995
+
+# ==========================
+# Target Network
+# ==========================
+
+TARGET_UPDATE_FREQUENCY = 50
