@@ -108,3 +108,7 @@ Each output neuron estimates the expected future reward (Q-value) for one pricin
 - Added Target Network
 - Implemented weight synchronization
 - Updated DQN training to use stable target Q-values
+- Completed DQN training pipeline
+- Added target network synchronization
+- Saved trained DQN model
+- Logged episode rewards

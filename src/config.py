@@ -63,3 +63,11 @@ EPSILON_DECAY = 0.995
 # ==========================
 
 TARGET_UPDATE_FREQUENCY = 50
+
+# ==========================
+# DQN Training
+# ==========================
+
+DQN_EPISODES = 500
+
+START_TRAINING_AFTER = 64

@@ -1,5 +1,5 @@
 import random
-
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -111,11 +111,11 @@ class DQNAgent:
 
         states, actions, rewards, next_states, dones = zip(*batch)
 
-        states = torch.FloatTensor(states)
-        actions = torch.LongTensor(actions).unsqueeze(1)
-        rewards = torch.FloatTensor(rewards)
-        next_states = torch.FloatTensor(next_states)
-        dones = torch.FloatTensor(dones)
+        states = torch.FloatTensor(np.array(states))
+        actions = torch.LongTensor(np.array(actions)).unsqueeze(1)
+        rewards = torch.FloatTensor(np.array(rewards))
+        next_states = torch.FloatTensor(np.array(next_states))
+        dones = torch.FloatTensor(np.array(dones))
 
         current_q = self.model(states).gather(1, actions).squeeze()
 
@@ -133,3 +133,10 @@ class DQNAgent:
         self.optimizer.step()
 
         return loss.item()
+
+    def save_model(self, filepath):
+
+        torch.save(
+            self.model.state_dict(),
+            filepath
+        )
