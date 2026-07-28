@@ -1,114 +1,356 @@
-# Travel & Hospitality Dynamic Pricing using Reinforcement Learning
+# Travel & Hospitality – Reinforcement Learning for Dynamic Pricing
 
-This project develops an autonomous pricing agent using Reinforcement Learning to maximize revenue from finite inventory over a limited selling horizon.
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.13-red?logo=pytorch)
+![Gymnasium](https://img.shields.io/badge/Gymnasium-1.3.0-green)
+![Reinforcement Learning](https://img.shields.io/badge/Reinforcement-Learning-orange)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Project Structure
+An end-to-end Reinforcement Learning project that optimizes dynamic pricing for finite inventory in travel and hospitality using **Q-Learning** and **Deep Q-Networks (DQN)**. The project simulates airline ticket or hotel room pricing where an intelligent agent learns pricing strategies that maximize long-term revenue while minimizing unsold inventory.
 
-(To be updated)
+---
 
-### Week 1 Progress
+## Executive Summary
 
-- Implemented stochastic customer demand model
-- Simulated customer purchase decisions
-- Completed Gymnasium environment step function
-- Simulated one booking season
-- Implemented custom Gymnasium environment
-- Built stochastic customer demand model
-- Developed baseline pricing strategies
-- Created evaluation pipeline for heuristic agents
+Pricing finite inventory such as airline seats and hotel rooms is a sequential decision-making problem where each pricing decision influences future revenue opportunities. Traditional rule-based pricing strategies cannot effectively adapt to changing demand patterns or the remaining selling horizon.
 
-### Code Refactoring
+This project formulates dynamic pricing as a **Markov Decision Process (MDP)** and trains reinforcement learning agents to maximize cumulative episode reward through continuous interaction with a custom Gymnasium environment.
 
-- Centralized configuration values in `config.py`
-- Improved project maintainability by removing hard-coded constants
-- Standardized evaluation settings
+The implementation includes:
 
-### Week 2 Progress
+- Custom Gymnasium environment
+- Stochastic customer demand simulation
+- Fixed-price and time-discount heuristic baselines
+- Tabular Q-Learning
+- Deep Q-Network (DQN)
+- Experience Replay
+- Target Network with Polyak Averaging
+- Business-oriented evaluation and visualization
 
-- Implemented the Q-Learning agent
-- Initialized the Q-table
-- Added epsilon-greedy action selection
-- Implemented Bellman update equation
-- Added epsilon decay
-- Trained Q-Learning agent over multiple episodes
-- Trained Q-Learning agent
-- Saved the learned Q-table
-- Evaluated the learned policy against baseline strategies
-- Visualized Q-Learning training rewards
-- Compared heuristic baselines with the learned policy
-- Generated evaluation plots for analysis
+---
 
-## Week 2 Deliverables
+## Business Problem
 
-✔ Baseline Pricing Strategies
+Businesses in travel and hospitality operate with **perishable inventory**.
 
-✔ Tabular Q-Learning Agent
+Examples include:
 
-✔ Bellman Update
+- Airline seats
+- Hotel rooms
+- Event tickets
 
-✔ Epsilon-Greedy Exploration
+Once the departure date or booking date passes, any unsold inventory has zero value.
 
-✔ Model Evaluation
+The pricing system therefore must balance two competing objectives:
 
-✔ Training Curve Visualization
+- Charge higher prices to maximize revenue.
+- Lower prices when necessary to reduce unsold inventory.
 
-✔ Revenue Comparison
+This project develops an RL-based pricing agent capable of learning these decisions autonomously.
 
-✔ Evaluation Metrics
+---
 
-## Neural Network Architecture
+## Objectives
 
-The DQN model is a fully connected feed-forward neural network.
+- Build a realistic booking simulation environment.
+- Formulate pricing as a Markov Decision Process.
+- Compare heuristic pricing strategies against Reinforcement Learning.
+- Implement both Q-Learning and Deep Q-Networks.
+- Evaluate learned pricing policies using business metrics.
 
-Architecture:
+---
 
-Input Layer
+# Project Architecture
 
-- Remaining Inventory
-- Days Until Departure
+<p align="center">
+<img src="assets/architecture.png" width="900">
+</p>
 
-↓
+---
 
-Hidden Layer (64 neurons)
+## Repository Structure
 
-↓
+```text
+travel-hospitality-rl-dynamic-pricing/
+│
+├── assets/
+│   ├── architecture.png
+│   ├── business_dashboard.png
+│   ├── dqn_training_convergence.png
+│   ├── dqn_training_loss.png
+│   ├── reward_comparison.png
+│   └── reward_distribution.png
+│
+├── models/
+│   ├── best_dqn_model.pth
+│   ├── final_dqn_model.pth
+│   └── q_table.npy
+│
+├── notebooks/
+│   ├── 01_environment.ipynb
+│   ├── 02_q_learning.ipynb
+│   ├── 03_dqn_training.ipynb
+│   └── 04_policy_evaluation.ipynb
+│
+├── outputs/
+│   └── figures/
+│
+├── src/
+│   ├── baselines.py
+│   ├── config.py
+│   ├── dqn_agent.py
+│   ├── environment.py
+│   ├── q_learning.py
+│   ├── replay_buffer.py
+│   └── utils.py
+│
+├── requirements.txt
+├── LICENSE
+└── README.md
+```
 
-ReLU Activation
+---
 
-↓
+# Technology Stack
 
-Hidden Layer (64 neurons)
+| Category | Technologies |
+|-----------|--------------|
+| Programming | Python |
+| Reinforcement Learning | Gymnasium |
+| Deep Learning | PyTorch |
+| Numerical Computing | NumPy |
+| Visualization | Matplotlib |
+| Environment | Custom OpenAI Gymnasium Environment |
 
-↓
+---
 
-ReLU Activation
+# Markov Decision Process (MDP)
 
-↓
+## State
 
-Output Layer (5 neurons)
+```text
+State = [Remaining Inventory, Days Remaining]
+```
 
-Each output neuron estimates the expected future reward (Q-value) for one pricing action.
+---
 
-## Week 3 Progress
+## Actions
 
-- Implemented Deep Q-Network architecture
-- Added PyTorch neural network
-- Validated forward pass
-- Added Experience Replay Buffer
-- Implemented random mini-batch sampling
-- Prepared DQN training pipeline
-- Added DQN Agent class
-- Integrated neural network and optimizer
-- Implemented epsilon-greedy action selection
-- Added epsilon decay
-- Implemented DQN training step
-- Added mini-batch learning
-- Computed Bellman targets
-- Updated neural network using gradient descent
-- Added Target Network
-- Implemented weight synchronization
-- Updated DQN training to use stable target Q-values
-- Completed DQN training pipeline
-- Added target network synchronization
-- Saved trained DQN model
-- Logged episode rewards
+The agent selects one of five discrete pricing levels.
+
+| Action | Price |
+|---------|------:|
+| 0 | $80 |
+| 1 | $100 |
+| 2 | $120 |
+| 3 | $140 |
+| 4 | $160 |
+
+---
+
+## Reward Function
+
+The reward consists of:
+
+- Revenue generated from successful purchases.
+- Penalty for unsold inventory at the end of the booking horizon.
+
+This encourages the agent to balance profitability with inventory utilization.
+
+---
+
+# Methodology
+
+## Week 1 – Environment Design
+
+- Custom Gymnasium environment
+- Booking season simulator
+- Inventory tracking
+- Time horizon management
+- Stochastic customer demand model
+
+---
+
+## Week 2 – Q-Learning
+
+Implemented:
+
+- Fixed Price baseline
+- Time Discount baseline
+- Tabular Q-Learning
+- Q-table training
+- Policy evaluation
+
+---
+
+## Week 3 – Deep Reinforcement Learning
+
+Implemented:
+
+- Deep Q-Network (DQN)
+- Experience Replay Buffer
+- Target Network
+- Polyak Averaging
+- Huber Loss
+- Gradient Clipping
+- Model Checkpointing
+
+---
+
+## Week 4 – Business Evaluation
+
+Generated:
+
+- Strategy comparison
+- Reward distribution
+- Training convergence
+- Pricing policy visualization
+- Inventory trajectory
+- Business dashboard
+
+---
+
+# Experimental Results
+
+| Strategy | Average Episode Reward |
+|-----------|-----------------------:|
+| Fixed Price | **1323.4** |
+| Time Discount | 1079.0 |
+| Q-Learning | 1158.0 |
+| **Deep Q-Network (DQN)** | **1337.4** |
+
+### Key Findings
+
+- Deep Q-Network achieved the highest average episode reward.
+- DQN consistently outperformed the heuristic pricing strategies.
+- Experience Replay and Target Networks significantly stabilized training.
+- Inventory penalties encouraged improved inventory utilization.
+
+---
+
+# Training Performance
+
+## DQN Training Convergence
+
+<p align="center">
+<img src="assets/dqn_training_convergence.png" width="850">
+</p>
+
+---
+
+## DQN Training Loss
+
+<p align="center">
+<img src="assets/dqn_training_loss.png" width="850">
+</p>
+
+---
+
+# Strategy Comparison
+
+## Average Episode Reward
+
+<p align="center">
+<img src="assets/reward_comparison.png" width="700">
+</p>
+
+---
+
+## Reward Distribution
+
+<p align="center">
+<img src="assets/reward_distribution.png" width="700">
+</p>
+
+---
+
+# Learned Pricing Policy
+
+The trained DQN converged to a stable pricing policy that maximized expected cumulative reward within the simulated market environment.
+
+<p align="center">
+<img src="assets/business_dashboard.png" width="900">
+</p>
+
+---
+
+# Features
+
+- Custom Gymnasium Environment
+- Reinforcement Learning from Scratch
+- Tabular Q-Learning
+- Deep Q-Network (DQN)
+- Experience Replay
+- Target Network
+- Polyak Averaging
+- Gradient Clipping
+- Config-driven Hyperparameters
+- Model Saving & Loading
+- Business-oriented Evaluation
+- Professional Visualizations
+
+---
+
+# Installation
+
+Clone the repository.
+
+```bash
+git clone https://github.com/<your-username>/travel-hospitality-rl-dynamic-pricing.git
+
+cd travel-hospitality-rl-dynamic-pricing
+```
+
+Install dependencies.
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# Running the Project
+
+Launch Jupyter Notebook.
+
+```bash
+jupyter notebook
+```
+
+Execute notebooks in the following order:
+
+1. `01_environment.ipynb`
+2. `02_q_learning.ipynb`
+3. `03_dqn_training.ipynb`
+4. `04_policy_evaluation.ipynb`
+
+---
+
+# Future Improvements
+
+Potential enhancements include:
+
+- Double Deep Q-Network (Double DQN)
+- Dueling DQN
+- Prioritized Experience Replay
+- Continuous pricing using PPO or SAC
+- Competitor pricing simulation
+- Seasonal demand forecasting
+- Multi-customer booking simulation
+- Dynamic state representation using contextual features
+
+---
+
+# License
+
+This project is licensed under the MIT License.
+
+---
+
+# Author
+
+**Siba Narayana Parida**
+
+NIT Rourkela
+
+If you found this project useful, consider giving the repository a ⭐.

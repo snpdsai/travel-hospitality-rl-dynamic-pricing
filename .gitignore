@@ -1,6 +1,36 @@
-.venv/
+# Python
 __pycache__/
+*.py[cod]
+*.so
+
+# Virtual Environment
+venv/
+.env
+
+# Jupyter
 .ipynb_checkpoints/
-*.pyc
-models/
-outputs/
+
+# VS Code
+.vscode/
+
+# PyTorch Models
+# Ignore temporary models only
+models/*.tmp
+*.pth
+
+# NumPy
+*.npy
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log

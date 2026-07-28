@@ -1,14 +1,11 @@
-import random
 from collections import deque
-
-from src.config import BUFFER_SIZE
-
+import random
 
 class ReplayBuffer:
 
-    def __init__(self):
+    def __init__(self, capacity=10000):
 
-        self.buffer = deque(maxlen=BUFFER_SIZE)
+        self.memory = deque(maxlen=capacity)
 
     def add(
         self,
@@ -19,7 +16,7 @@ class ReplayBuffer:
         done
     ):
 
-        self.buffer.append(
+        self.memory.append(
             (
                 state,
                 action,
@@ -32,10 +29,10 @@ class ReplayBuffer:
     def sample(self, batch_size):
 
         return random.sample(
-            self.buffer,
+            self.memory,
             batch_size
         )
 
     def __len__(self):
 
-        return len(self.buffer)
+        return len(self.memory)

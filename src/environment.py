@@ -1,84 +1,191 @@
+"""
+Custom Gymnasium environment for
+Dynamic Pricing using Reinforcement Learning.
+"""
+
+from __future__ import annotations
+
 import gymnasium as gym
-from gymnasium import spaces
 import numpy as np
-from src.demand import DemandModel
+from gymnasium import spaces
+
 from src.config import (
-    MAX_INVENTORY,
-    MAX_DAYS,
-    BASE_PRICE,
-    PRICE_LEVELS
+    INITIAL_INVENTORY,
+    BOOKING_HORIZON,
+    PRICE_LEVELS,
 )
+
 
 class DynamicPricingEnv(gym.Env):
     """
-    Custom Gymnasium Environment
-    for Dynamic Pricing.
+    Airline / Hotel Dynamic Pricing Environment.
+
+    State:
+        [remaining_inventory, remaining_days]
+
+    Actions:
+        0 -> $80
+        1 -> $100
+        2 -> $120
+        3 -> $140
+        4 -> $160
+
+    Reward:
+        Revenue generated from a successful booking.
     """
 
-    def __init__(self):
+    metadata = {"render_modes": []}
 
+    def __init__(self):
         super().__init__()
 
-        self.max_inventory = MAX_INVENTORY
-        self.max_days = MAX_DAYS
-        self.base_price = BASE_PRICE
+        self.initial_inventory = INITIAL_INVENTORY
+        self.booking_horizon = BOOKING_HORIZON
         self.price_levels = PRICE_LEVELS
 
-        # State:
-        # [remaining inventory, remaining days]
+        self.action_space = spaces.Discrete(len(self.price_levels))
 
-        self.observation_space = spaces.MultiDiscrete(
-            [self.max_inventory + 1, self.max_days + 1]
-        )
-
-        # Five pricing actions
-
-        self.action_space = spaces.Discrete(5)
-
-        self.state = None
-
-        self.demand_model = DemandModel()
-
-    def reset(self, seed=None, options=None):
-
-        super().reset(seed=seed)
-
-        self.state = np.array(
-            [self.max_inventory, self.max_days],
+        self.observation_space = spaces.Box(
+            low=np.array([0, 0], dtype=np.int32),
+            high=np.array(
+                [
+                    self.initial_inventory,
+                    self.booking_horizon,
+                ],
+                dtype=np.int32,
+            ),
             dtype=np.int32,
         )
 
-        return self.state, {}
+        self.reset()
+
+    def reset(self, seed=None, options=None):
+        """
+        Reset the environment.
+        """
+
+        super().reset(seed=seed)
+
+        self.inventory = self.initial_inventory
+        self.days_left = self.booking_horizon
+
+        state = np.array(
+            [
+                self.inventory,
+                self.days_left,
+            ],
+            dtype=np.int32,
+        )
+
+        return state, {}
+
+    def demand_probability(self, price: int) -> float:
+        """
+        Estimate customer purchase probability based on
+        price, remaining booking time, and remaining inventory.
+        """
+
+        base_probability = {
+            80: 0.90,
+            100: 0.75,
+            120: 0.60,
+            140: 0.40,
+            160: 0.25,
+        }
+
+        probability = base_probability[price]
+
+        # --------------------------------------------------
+        # Demand increases as departure approaches
+        # --------------------------------------------------
+
+        time_progress = (
+            self.booking_horizon - self.days_left
+        ) / self.booking_horizon
+
+        probability += 0.45 * (time_progress ** 1.5)
+
+        # --------------------------------------------------
+        # Encourage selling remaining inventory
+        # --------------------------------------------------
+
+        inventory_ratio = self.inventory / self.initial_inventory
+
+        if inventory_ratio > 0.70:
+            probability += 0.10
+
+        elif inventory_ratio < 0.30:
+            probability -= 0.05
+
+        probability = np.clip(
+            probability,
+            0.05,
+            0.99,
+        )
+
+        return float(probability)
 
     def step(self, action):
+        """
+        Execute one pricing decision.
+        """
 
-        inventory, days_left = self.state
+        price = self.price_levels[action]
 
-        done = False
+        probability = self.demand_probability(price)
+
+        purchase = (
+            np.random.random() < probability
+            and self.inventory > 0
+        )
 
         reward = 0
 
-        if inventory > 0:
+        if purchase:
+            reward = price
+            self.inventory -= 1
 
-            bought = self.demand_model.customer_buys(action, days_left)
+        self.days_left -= 1
 
-            if bought:
-                inventory -= 1
-                reward = self.price_levels[action]
-
-        days_left -= 1
-
-        if inventory == 0 or days_left == 0:
-            done = True
-
-        self.state = np.array(
-            [inventory, days_left],
-            dtype=np.int32
+        terminated = (
+            self.days_left <= 0
+            or self.inventory <= 0
         )
 
-        return self.state, reward, done, False, {}
+        # Penalize unsold inventory when the booking season ends
+        if self.days_left <= 0 and self.inventory > 0:
+            reward -= 20 * self.inventory
+
+        truncated = False
+
+        next_state = np.array(
+            [
+                self.inventory,
+                self.days_left,
+            ],
+            dtype=np.int32,
+        )
+
+        info = {
+            "price": price,
+            "probability": probability,
+            "purchase": purchase,
+        }
+
+        return (
+            next_state,
+            reward,
+            terminated,
+            truncated,
+            info,
+        )
 
     def render(self):
+        """
+        Display the current environment state.
+        """
 
-        print(f"Inventory: {self.state[0]}")
-        print(f"Days Left: {self.state[1]}")
+        print(
+            f"Inventory: {self.inventory} | "
+            f"Days Left: {self.days_left}"
+        )

@@ -1,37 +1,28 @@
 import numpy as np
-from src.config import PRICE_MULTIPLIERS
 
-class DemandModel:
+
+def purchase_probability(price, days_left):
     """
-    Simulates customer purchase probability.
+    Returns the probability that a customer purchases
+    at the given price and remaining days.
     """
 
-    def __init__(self):
+    base_probability = {
+        80: 0.90,
+        100: 0.75,
+        120: 0.60,
+        140: 0.40,
+        160: 0.25,
+    }
 
-        self.price_multipliers = PRICE_MULTIPLIERS
+    probability = base_probability[price]
 
-    def purchase_probability(self, action, days_left):
-        """
-        Returns probability of purchase.
-        """
+    # Increase urgency as departure approaches
+    urgency_bonus = (15 - days_left) * 0.02
 
-        price_factor = self.price_multipliers[action]
+    probability += urgency_bonus
 
-        # Lower price -> higher probability
-        price_effect = 1.2 - price_factor
+    # Keep probability between 5% and 99%
+    probability = np.clip(probability, 0.05, 0.99)
 
-        # Demand increases near departure
-        time_effect = (30 - days_left) / 30
-
-        probability = 0.30 + 0.45 * price_effect + 0.25 * time_effect
-
-        return np.clip(probability, 0.05, 0.95)
-
-    def customer_buys(self, action, days_left):
-        """
-        Returns True if a purchase occurs.
-        """
-
-        p = self.purchase_probability(action, days_left)
-
-        return np.random.rand() < p
+    return probability

@@ -1,73 +1,70 @@
-# Environment Settings
+"""
+Configuration file for the Travel & Hospitality
+Dynamic Pricing Reinforcement Learning Project.
+"""
 
-MAX_INVENTORY = 50
-MAX_DAYS = 30
-BASE_PRICE = 100
+# ==========================================================
+# Environment Configuration
+# ==========================================================
 
-# Pricing Actions
+# Initial inventory available at the start of each episode
+INITIAL_INVENTORY = 20
 
-PRICE_LEVELS = {
-    0: 80,
-    1: 90,
-    2: 100,
-    3: 110,
-    4: 120
-}
+# Number of booking days before departure
+BOOKING_HORIZON = 15
 
-PRICE_MULTIPLIERS = {
-    0: 0.8,
-    1: 0.9,
-    2: 1.0,
-    3: 1.1,
-    4: 1.2
-}
+# Available pricing actions
+PRICE_LEVELS = [
+    80,
+    100,
+    120,
+    140,
+    160,
+]
 
-# Evaluation
+# ==========================================================
+# Q-Learning Hyperparameters
+# ==========================================================
 
-DEFAULT_EPISODES = 100
+QL_ALPHA = 0.1
+QL_GAMMA = 0.95
 
-# Random Seed
+QL_EPSILON_START = 1.0
+QL_EPSILON_DECAY = 0.995
+QL_EPSILON_MIN = 0.05
 
-RANDOM_SEED = 42
+QL_EPISODES = 500
 
-# ==========================
+# ==========================================================
 # DQN Hyperparameters
-# ==========================
+# ==========================================================
 
-STATE_SIZE = 2          # Inventory, Days Left
-ACTION_SIZE = 5         # Five pricing levels
+DQN_GAMMA = 0.95
 
-HIDDEN_SIZE = 64
+LEARNING_RATE = 0.001
 
-LEARNING_RATE = 1e-3
-
-GAMMA = 0.95
-
-# ==========================
-# Replay Buffer
-# ==========================
-
-BUFFER_SIZE = 10000
 BATCH_SIZE = 64
 
-# ==========================
-# DQN Agent
-# ==========================
+REPLAY_CAPACITY = 10_000
 
-EPSILON_START = 1.0
-EPSILON_MIN = 0.01
-EPSILON_DECAY = 0.995
+DQN_EPSILON_START = 1.0
+DQN_EPSILON_DECAY = 0.995
+DQN_EPSILON_MIN = 0.05
 
-# ==========================
-# Target Network
-# ==========================
-
-TARGET_UPDATE_FREQUENCY = 50
-
-# ==========================
-# DQN Training
-# ==========================
+TAU = 0.005
 
 DQN_EPISODES = 500
 
-START_TRAINING_AFTER = 64
+# ==========================================================
+# Evaluation
+# ==========================================================
+
+EVALUATION_EPISODES = 100
+
+MOVING_AVERAGE_WINDOW = 20
+
+# ==========================================================
+# Random Seed
+# ==========================================================
+
+RANDOM_SEED = 42
